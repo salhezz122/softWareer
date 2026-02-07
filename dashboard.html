@@ -64,5 +64,12 @@
 
   <script src="assets/app.js"></script>
   <script>window.AFC.initUserDashboard();</script>
+  <script type="module">
+  import "./assets/app.js";
+  window.addEventListener("DOMContentLoaded", () => {
+    window.AFC.initUserDashboard();
+  });
+</script>
+
 </body>
 </html>
