@@ -1,12 +1,13 @@
-
-/* Amman FactCheck - Firebase version (converted from LocalStorage) */
+/* Amman FactCheck – Firebase version (converted from LocalStorage) */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 import {
   getFirestore,
   collection,
@@ -15,10 +16,11 @@ import {
   query,
   where,
   updateDoc,
-  doc
+  doc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// ===== Firebase Config (YOUR PROJECT) =====
+/* 🔥 Firebase Config */
 const firebaseConfig = {
   apiKey: "AIzaSyCtVmD12uHz-JFAcPv5EpwDVKdSvaslzAo",
   authDomain: "amman-factcheck.firebaseapp.com",
@@ -32,130 +34,121 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ===== App Config =====
+/* ===== App Config ===== */
 const APP = {
   company: "Amman FactCheck",
   adminPassword: "SS4625ss"
 };
 
-// ===== Session =====
-function setSession(data){
-  sessionStorage.setItem("afc_session", JSON.stringify(data));
-}
-function getSession(){
-  try { return JSON.parse(sessionStorage.getItem("afc_session")); }
-  catch { return null; }
-}
-function clearSession(){
-  sessionStorage.removeItem("afc_session");
-}
-function requireRole(role){
-  const s = getSession();
-  if(!s || s.role !== role) location.href = "index.html";
-  return s;
-}
-
-// ===== Helpers =====
+/* ===== Helpers ===== */
 function toast(msg){
-  const el = document.getElementById("toast");
-  if(!el) return alert(msg);
-  el.textContent = msg;
-  el.classList.add("show");
-  setTimeout(()=>el.classList.remove("show"),2200);
+  alert(msg);
 }
 
-// ================= AUTH =================
-async function registerUser({companyName, email, password}){
+/* ===== AUTH ===== */
+async function registerUser({ companyName, email, password }) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
-  await addDoc(collection(db,"users"),{
+
+  await addDoc(collection(db, "users"), {
     uid: cred.user.uid,
     companyName,
     email,
+    role: "user",
     status: "pending",
-    createdAt: new Date().toISOString()
+    createdAt: serverTimestamp()
   });
 }
 
-async function loginUser({email, password}){
+async function loginUser({ email, password }) {
   const cred = await signInWithEmailAndPassword(auth, email, password);
-  const q = query(collection(db,"users"), where("uid","==",cred.user.uid));
+
+  const q = query(
+    collection(db, "users"),
+    where("uid", "==", cred.user.uid)
+  );
   const snap = await getDocs(q);
-  if(snap.empty) throw new Error("الحساب غير موجود");
-  const user = snap.docs[0];
-  if(user.data().status !== "approved")
-    throw new Error("الحساب قيد المراجعة");
-  setSession({role:"user", uid:cred.user.uid, userDoc:user.id});
-  return user.data();
+
+  if (snap.empty) throw new Error("الحساب غير موجود");
+  const user = snap.docs[0].data();
+
+  if (user.status !== "approved") {
+    throw new Error("الحساب قيد المراجعة من الأدمن");
+  }
+
+  window.location.href = "dashboard.html";
 }
 
-function loginAdmin({password}){
-  if(password !== APP.adminPassword)
+function loginAdmin({ password }) {
+  if (password !== APP.adminPassword) {
     throw new Error("كلمة مرور الأدمن غير صحيحة");
-  setSession({role:"admin"});
+  }
+  localStorage.setItem("admin", "true");
+  window.location.href = "admin.html";
 }
 
-// ================= USERS (ADMIN) =================
-async function listUsers(){
-  const snap = await getDocs(collection(db,"users"));
-  return snap.docs.map(d=>({id:d.id, ...d.data()}));
+function logout() {
+  signOut(auth);
+  localStorage.removeItem("admin");
+  window.location.href = "index.html";
 }
 
-async function updateUser(id, patch){
-  await updateDoc(doc(db,"users",id), patch);
-}
+/* ===== INIT PAGES ===== */
+function initIndex() {
+  document.querySelectorAll("[data-company]").forEach(
+    el => el.textContent = APP.company
+  );
 
-// ================= NEWS =================
-async function createNews({userUid, title, type, text, fileDataUrl, fileName}){
-  await addDoc(collection(db,"news"),{
-    userUid, title, type,
-    text: text||"",
-    fileDataUrl: fileDataUrl||"",
-    fileName: fileName||"",
-    status:"pending",
-    verdict:null,
-    createdAt:new Date().toISOString()
-  });
-}
-
-async function listNews(){
-  const snap = await getDocs(collection(db,"news"));
-  return snap.docs.map(d=>({id:d.id, ...d.data()}));
-}
-
-// ================= INIT PAGES =================
-function initIndex(){
-  document.querySelectorAll("[data-company]").forEach(el=>el.textContent=APP.company);
-
-  document.getElementById("adminForm")?.addEventListener("submit",e=>{
+  document.getElementById("registerForm")?.addEventListener("submit", async e => {
     e.preventDefault();
-    try{
-      loginAdmin({password:adminPassword.value});
-      location.href="admin.html";
-    }catch(err){ toast(err.message); }
-  });
-
-  document.getElementById("loginForm")?.addEventListener("submit",async e=>{
-    e.preventDefault();
-    try{
-      await loginUser({email:loginEmail.value, password:loginPassword.value});
-      location.href="dashboard.html";
-    }catch(err){ toast(err.message); }
-  });
-
-  document.getElementById("registerForm")?.addEventListener("submit",async e=>{
-    e.preventDefault();
-    try{
+    try {
       await registerUser({
-        companyName:regCompany.value,
-        email:regEmail.value,
-        password:regPassword.value
+        companyName: regCompany.value,
+        email: regEmail.value,
+        password: regPassword.value
       });
-      toast("تم إرسال الطلب، بانتظار موافقة الأدمن");
-    }catch(err){ toast(err.message); }
+      toast("تم إرسال طلب إنشاء الحساب");
+    } catch (err) {
+      toast(err.message);
+    }
+  });
+
+  document.getElementById("loginForm")?.addEventListener("submit", async e => {
+    e.preventDefault();
+    try {
+      await loginUser({
+        email: loginEmail.value,
+        password: loginPassword.value
+      });
+    } catch (err) {
+      toast(err.message);
+    }
+  });
+
+  document.getElementById("adminForm")?.addEventListener("submit", e => {
+    e.preventDefault();
+    try {
+      loginAdmin({ password: adminPassword.value });
+    } catch (err) {
+      toast(err.message);
+    }
   });
 }
 
-// expose
+function initAdmin() {
+  if (!localStorage.getItem("admin")) {
+    location.href = "index.html";
+    return;
+  }
+  document.getElementById("logoutBtn")?.addEventListener("click", logout);
+}
+
+function initUserDashboard() {
+  document.getElementById("logoutBtn")?.addEventListener("click", logout);
+}
+
+/* expose */
 window.AFC = {
-  initIndex
+  initIndex,
+  initAdmin,
+  initUserDashboard
 };
