@@ -1,4 +1,4 @@
-/* Amman FactCheck – Firebase version (converted from LocalStorage) */
+/* Amman FactCheck – Firebase FINAL WORKING VERSION */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -7,7 +7,6 @@ import {
   signInWithEmailAndPassword,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
 import {
   getFirestore,
   collection,
@@ -15,8 +14,6 @@ import {
   getDocs,
   query,
   where,
-  updateDoc,
-  doc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -30,22 +27,28 @@ const firebaseConfig = {
   appId: "1:515492556687:web:7526dc7b3e0ecc74d2a5fa"
 };
 
+/* init firebase */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ===== App Config ===== */
+/* app config */
 const APP = {
   company: "Amman FactCheck",
   adminPassword: "SS4625ss"
 };
 
-/* ===== Helpers ===== */
+/* toast */
 function toast(msg){
-  alert(msg);
+  const t = document.getElementById("toast");
+  if(!t){ alert(msg); return; }
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=> t.classList.remove("show"), 2500);
 }
 
-/* ===== AUTH ===== */
+/* ================= AUTH ================= */
+
 async function registerUser({ companyName, email, password }) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -53,7 +56,6 @@ async function registerUser({ companyName, email, password }) {
     uid: cred.user.uid,
     companyName,
     email,
-    role: "user",
     status: "pending",
     createdAt: serverTimestamp()
   });
@@ -62,10 +64,7 @@ async function registerUser({ companyName, email, password }) {
 async function loginUser({ email, password }) {
   const cred = await signInWithEmailAndPassword(auth, email, password);
 
-  const q = query(
-    collection(db, "users"),
-    where("uid", "==", cred.user.uid)
-  );
+  const q = query(collection(db, "users"), where("uid", "==", cred.user.uid));
   const snap = await getDocs(q);
 
   if (snap.empty) throw new Error("الحساب غير موجود");
@@ -75,80 +74,117 @@ async function loginUser({ email, password }) {
     throw new Error("الحساب قيد المراجعة من الأدمن");
   }
 
-  window.location.href = "dashboard.html";
+  location.href = "dashboard.html";
 }
 
 function loginAdmin({ password }) {
   if (password !== APP.adminPassword) {
     throw new Error("كلمة مرور الأدمن غير صحيحة");
   }
-  localStorage.setItem("admin", "true");
-  window.location.href = "admin.html";
+  localStorage.setItem("admin", "1");
+  location.href = "admin.html";
 }
 
-function logout() {
+function logout(){
   signOut(auth);
   localStorage.removeItem("admin");
-  window.location.href = "index.html";
+  location.href = "index.html";
 }
 
-/* ===== INIT PAGES ===== */
+/* ================= INIT INDEX ================= */
+
 function initIndex() {
+
+  /* اسم الشركة */
   document.querySelectorAll("[data-company]").forEach(
     el => el.textContent = APP.company
   );
 
-  document.getElementById("registerForm")?.addEventListener("submit", async e => {
+  /* ====== تبديل الواجهات (المشكلة الأساسية) ====== */
+  const modeBtns = document.querySelectorAll("[data-mode]");
+  const panels = document.querySelectorAll("[data-panel]");
+
+  function show(mode){
+    panels.forEach(p=>{
+      p.style.display =
+        p.getAttribute("data-panel") === mode ? "block" : "none";
+    });
+    modeBtns.forEach(b=>{
+      b.classList.toggle("active", b.getAttribute("data-mode") === mode);
+    });
+  }
+
+  modeBtns.forEach(btn=>{
+    btn.onclick = ()=> show(btn.getAttribute("data-mode"));
+  });
+
+  show("login"); // الافتراضي
+
+  /* ===== Register ===== */
+  registerForm?.addEventListener("submit", async e=>{
     e.preventDefault();
-    try {
+    try{
       await registerUser({
         companyName: regCompany.value,
         email: regEmail.value,
         password: regPassword.value
       });
-      toast("تم إرسال طلب إنشاء الحساب");
-    } catch (err) {
+      toast("تم إرسال طلب إنشاء الحساب، بانتظار موافقة الأدمن");
+      registerForm.reset();
+      show("login");
+    }catch(err){
       toast(err.message);
     }
   });
 
-  document.getElementById("loginForm")?.addEventListener("submit", async e => {
+  /* ===== Login ===== */
+  loginForm?.addEventListener("submit", async e=>{
     e.preventDefault();
-    try {
+    try{
       await loginUser({
         email: loginEmail.value,
         password: loginPassword.value
       });
-    } catch (err) {
+    }catch(err){
       toast(err.message);
     }
   });
 
-  document.getElementById("adminForm")?.addEventListener("submit", e => {
+  /* ===== Admin Login ===== */
+  adminForm?.addEventListener("submit", e=>{
     e.preventDefault();
-    try {
+    try{
       loginAdmin({ password: adminPassword.value });
-    } catch (err) {
+    }catch(err){
       toast(err.message);
     }
   });
 }
 
-function initAdmin() {
-  if (!localStorage.getItem("admin")) {
+/* ================= OTHER PAGES ================= */
+
+function initUserDashboard(){
+  logoutBtn?.addEventListener("click", logout);
+}
+
+function initAdmin(){
+  if(!localStorage.getItem("admin")){
     location.href = "index.html";
     return;
   }
-  document.getElementById("logoutBtn")?.addEventListener("click", logout);
+  logoutBtn?.addEventListener("click", logout);
 }
 
-function initUserDashboard() {
-  document.getElementById("logoutBtn")?.addEventListener("click", logout);
+function initArchive(){
+  document.querySelectorAll("[data-company]").forEach(
+    el => el.textContent = APP.company
+  );
 }
 
 /* expose */
 window.AFC = {
   initIndex,
+  initUserDashboard,
   initAdmin,
-  initUserDashboard
+  initArchive
 };
