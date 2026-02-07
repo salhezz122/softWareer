@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Amman FactCheck | الأرشيف</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="card pad">
+      <div class="row" style="justify-content:space-between">
+        <div class="brand" style="padding:0">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <h1 style="margin:0"><span data-company></span> — الأرشيف</h1>
+            <p class="kicker" style="margin:4px 0 0 0">كل الأخبار التي تم اعتمادها (صحيح/خطأ) مع تاريخ المراجعة.</p>
+          </div>
+        </div>
+        <button id="goHome" class="btn secondary" type="button">العودة</button>
+      </div>
+
+      <hr class="sep"/>
+
+      <div class="grid">
+        <div class="col-4 card pad">
+          <div class="small">الإجمالي</div>
+          <div style="font-size:28px;font-weight:800;margin-top:6px" id="countAll">0</div>
+        </div>
+        <div class="col-4 card pad">
+          <div class="small">صحيح</div>
+          <div style="font-size:28px;font-weight:800;margin-top:6px" id="countTrue">0</div>
+        </div>
+        <div class="col-4 card pad">
+          <div class="small">خطأ</div>
+          <div style="font-size:28px;font-weight:800;margin-top:6px" id="countFalse">0</div>
+        </div>
+
+        <div class="col-12 card pad">
+          <div class="grid">
+            <div class="col-6">
+              <label>فلتر</label>
+              <select id="filter">
+                <option value="all">الكل</option>
+                <option value="true">صحيح</option>
+                <option value="false">خطأ</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label>بحث (عنوان / محتوى / اسم شركة)</label>
+              <input id="q" placeholder="اكتب للبحث..." />
+            </div>
+          </div>
+          <hr class="sep"/>
+          <div style="overflow:auto">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>العنوان</th>
+                  <th>النوع</th>
+                  <th>النتيجة</th>
+                  <th>المرسل</th>
+                  <th>تاريخ المراجعة</th>
+                  <th>عرض</th>
+                </tr>
+              </thead>
+              <tbody id="archiveTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast + Modal -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <header>
+        <h3 id="modalTitle">—</h3>
+        <button class="btn secondary" data-close type="button">إغلاق</button>
+      </header>
+      <div class="body" id="modalBody"></div>
+      <div class="body" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script src="assets/app.js"></script>
+  <script>window.AFC.initArchive();</script>
+</body>
+</html>
