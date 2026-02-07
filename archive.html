@@ -7,31 +7,11 @@
 </head>
 <body>
 
-<div class="container">
-  <h1><span data-company></span> – الأرشيف</h1>
-
-  <button id="goHome" class="btn secondary">رجوع</button>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>العنوان</th>
-        <th>النتيجة</th>
-        <th>الشركة</th>
-        <th>التاريخ</th>
-      </tr>
-    </thead>
-    <tbody id="archiveTable"></tbody>
-  </table>
-</div>
-
-<div id="toast" class="toast"></div>
+<h1><span data-company></span> — الأرشيف</h1>
 
 <script type="module">
   import "./assets/app.js";
-  window.addEventListener("DOMContentLoaded", () => {
-    window.AFC.initArchive();
-  });
+  window.AFC.initArchive();
 </script>
 
 </body>
