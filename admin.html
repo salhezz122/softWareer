@@ -13,29 +13,17 @@
       <div class="logo"></div>
       <h1><span data-company></span></h1>
     </div>
-
-    <nav class="nav">
-      <a href="#home">الرئيسية</a>
-      <a href="#users">المستخدمين</a>
-      <a href="#review">الأخبار</a>
-      <a href="archive.html">الأرشيف</a>
-      <button id="logoutBtn" class="btn ghost">خروج</button>
-    </nav>
+    <button id="logoutBtn" class="btn ghost">تسجيل خروج</button>
   </aside>
 
   <main class="main">
     <h2>لوحة الأدمن</h2>
-    <div id="view"></div>
   </main>
 </div>
 
-<div id="toast" class="toast"></div>
-
 <script type="module">
   import "./assets/app.js";
-  window.addEventListener("DOMContentLoaded", () => {
-    window.AFC.initAdmin();
-  });
+  window.AFC.initAdmin();
 </script>
 
 </body>
