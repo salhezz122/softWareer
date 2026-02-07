@@ -10,6 +10,7 @@
 
 <div class="container">
   <div class="hero">
+
     <div class="card pad">
       <div class="brand">
         <div class="logo"></div>
@@ -20,7 +21,7 @@
       </div>
       <hr class="sep"/>
       <div class="note">
-        المستخدم يسجّل ➜ الأدمن يوافق ➜ إرسال أخبار ➜ تدقيق ➜ أرشيف
+        المستخدم يسجّل ➜ الأدمن يوافق ➜ المستخدم يرسل خبر ➜ تدقيق ➜ أرشيف
       </div>
     </div>
 
@@ -33,35 +34,54 @@
           <button class="btn secondary" data-mode="admin">دخول أدمن</button>
         </div>
 
-        <!-- login -->
+        <!-- Login -->
         <div data-panel="login">
           <form id="loginForm">
-            <input id="loginEmail" type="email" placeholder="الإيميل" required />
-            <input id="loginPassword" type="password" placeholder="كلمة المرور" required />
+            <div class="field">
+              <label>الإيميل</label>
+              <input id="loginEmail" type="email" required />
+            </div>
+            <div class="field">
+              <label>كلمة المرور</label>
+              <input id="loginPassword" type="password" required />
+            </div>
             <button class="btn" style="width:100%">دخول</button>
           </form>
         </div>
 
-        <!-- register -->
+        <!-- Register -->
         <div data-panel="register" style="display:none">
           <form id="registerForm">
-            <input id="regCompany" placeholder="اسم الشركة" required />
-            <input id="regEmail" type="email" placeholder="الإيميل" required />
-            <input id="regPassword" type="password" placeholder="كلمة المرور" required />
+            <div class="field">
+              <label>اسم الشركة</label>
+              <input id="regCompany" required />
+            </div>
+            <div class="field">
+              <label>الإيميل</label>
+              <input id="regEmail" type="email" required />
+            </div>
+            <div class="field">
+              <label>كلمة المرور</label>
+              <input id="regPassword" type="password" required />
+            </div>
             <button class="btn" style="width:100%">إنشاء حساب</button>
           </form>
         </div>
 
-        <!-- admin -->
+        <!-- Admin -->
         <div data-panel="admin" style="display:none">
           <form id="adminForm">
-            <input id="adminPassword" type="password" placeholder="كلمة مرور الأدمن" required />
+            <div class="field">
+              <label>كلمة مرور الأدمن</label>
+              <input id="adminPassword" type="password" required />
+            </div>
             <button class="btn" style="width:100%">دخول الأدمن</button>
           </form>
         </div>
 
       </div>
     </div>
+
   </div>
 </div>
 
@@ -69,9 +89,7 @@
 
 <script type="module">
   import "./assets/app.js";
-  window.addEventListener("DOMContentLoaded", () => {
-    window.AFC.initIndex();
-  });
+  window.AFC.initIndex();
 </script>
 
 </body>
