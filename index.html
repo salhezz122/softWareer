@@ -7,105 +7,67 @@
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="hero">
-      <div class="card pad">
-        <div class="brand" style="padding:0">
-          <div class="logo" aria-hidden="true"></div>
-          <div>
-            <h1><span data-company></span></h1>
-            <p>منصة تدقيق أخبار (LocalStorage Demo)</p>
-          </div>
-        </div>
-        <hr class="sep"/>
-        <div class="note">
-          <b>تنبيه:</b> هذا مشروع للعرض فقط (بدون باك-إند). لا تستخدمه كنظام فعلي.
-        </div>
-        <div style="margin-top:12px" class="small">
-          <b>مسار العمل:</b> المستخدم يسجّل ➜ الحساب يصبح <b>بانتظار موافقة الأدمن</b> ➜ الأدمن يقبل المستخدم ➜ المستخدم يرسل أخبار ➜ الأدمن يراجع ويحدد صحيح/خطأ ➜ تظهر النتائج في الأرشيف.
+
+<div class="container">
+  <div class="hero">
+    <div class="card pad">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1><span data-company></span></h1>
+          <p>منصة تدقيق أخبار</p>
         </div>
       </div>
+      <hr class="sep"/>
+      <div class="note">
+        المستخدم يسجّل ➜ الأدمن يوافق ➜ إرسال أخبار ➜ تدقيق ➜ أرشيف
+      </div>
+    </div>
 
-      <div class="auth-wrap">
-        <div class="auth-card">
-          <div class="auth-head">
-            <div class="logo" style="width:44px;height:44px;border-radius:16px"></div>
-            <div>
-              <h2>الدخول إلى النظام</h2>
-              <p>اختر: دخول مستخدم / إنشاء حساب / دخول أدمن</p>
-            </div>
-          </div>
+    <div class="auth-wrap">
+      <div class="auth-card">
 
-          <div class="row" style="margin-bottom:12px">
-            <button class="btn secondary" type="button" data-mode="login">تسجيل دخول</button>
-            <button class="btn secondary" type="button" data-mode="register">إنشاء حساب</button>
-            <button class="btn secondary" type="button" data-mode="admin">دخول أدمن</button>
-          </div>
-
-          <!-- Login -->
-          <div data-panel="login">
-            <form id="loginForm">
-              <div class="field">
-                <label>الإيميل</label>
-                <input id="loginEmail" type="email" required placeholder="name@company.com"/>
-              </div>
-              <div class="field">
-                <label>كلمة المرور</label>
-                <input id="loginPassword" type="password" required placeholder="••••••••"/>
-              </div>
-              <button class="btn" style="width:100%">دخول</button>
-              <div class="small" style="margin-top:10px;color:var(--muted)">
-                * لا يمكنك الدخول قبل موافقة الأدمن على حسابك.
-              </div>
-            </form>
-          </div>
-
-          <!-- Register -->
-          <div data-panel="register" style="display:none">
-            <form id="registerForm">
-              <div class="field">
-                <label>اسم الشركة</label>
-                <input id="regCompany" required placeholder="مثال: شركة الأفق للإعلام"/>
-              </div>
-              <div class="field">
-                <label>الإيميل</label>
-                <input id="regEmail" type="email" required placeholder="name@company.com"/>
-              </div>
-              <div class="field">
-                <label>كلمة المرور</label>
-                <input id="regPassword" type="password" required placeholder="6 أحرف أو أكثر"/>
-              </div>
-              <button class="btn" style="width:100%">إرسال طلب إنشاء الحساب</button>
-              <div class="small" style="margin-top:10px;color:var(--muted)">
-                سيتم وضع الحساب "بانتظار موافقة الأدمن".
-              </div>
-            </form>
-          </div>
-
-          <!-- Admin -->
-          <div data-panel="admin" style="display:none">
-            <form id="adminForm">
-              <div class="field">
-                <label>كلمة مرور الأدمن</label>
-                <input id="adminPassword" type="password" required placeholder="••••••••"/>
-              </div>
-              <button class="btn" style="width:100%">دخول الأدمن</button>
-              <div class="small" style="margin-top:10px;color:var(--muted)">
-                كلمة مرور الأدمن مطلوبة كما طلبت.
-              </div>
-            </form>
-          </div>
-
+        <div class="row">
+          <button class="btn secondary" data-mode="login">تسجيل دخول</button>
+          <button class="btn secondary" data-mode="register">إنشاء حساب</button>
+          <button class="btn secondary" data-mode="admin">دخول أدمن</button>
         </div>
+
+        <!-- login -->
+        <div data-panel="login">
+          <form id="loginForm">
+            <input id="loginEmail" type="email" placeholder="الإيميل" required />
+            <input id="loginPassword" type="password" placeholder="كلمة المرور" required />
+            <button class="btn" style="width:100%">دخول</button>
+          </form>
+        </div>
+
+        <!-- register -->
+        <div data-panel="register" style="display:none">
+          <form id="registerForm">
+            <input id="regCompany" placeholder="اسم الشركة" required />
+            <input id="regEmail" type="email" placeholder="الإيميل" required />
+            <input id="regPassword" type="password" placeholder="كلمة المرور" required />
+            <button class="btn" style="width:100%">إنشاء حساب</button>
+          </form>
+        </div>
+
+        <!-- admin -->
+        <div data-panel="admin" style="display:none">
+          <form id="adminForm">
+            <input id="adminPassword" type="password" placeholder="كلمة مرور الأدمن" required />
+            <button class="btn" style="width:100%">دخول الأدمن</button>
+          </form>
+        </div>
+
       </div>
     </div>
   </div>
+</div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="toast" class="toast"></div>
 
-  <script src="assets/app.js"></script>
-  <script>window.AFC.initIndex();</script>
-  <script type="module">
+<script type="module">
   import "./assets/app.js";
   window.addEventListener("DOMContentLoaded", () => {
     window.AFC.initIndex();
