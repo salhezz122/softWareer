@@ -105,5 +105,12 @@
 
   <script src="assets/app.js"></script>
   <script>window.AFC.initIndex();</script>
+  <script type="module">
+  import "./assets/app.js";
+  window.addEventListener("DOMContentLoaded", () => {
+    window.AFC.initIndex();
+  });
+</script>
+
 </body>
 </html>
